@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+</head>
+<body>
+    <h1>Boardgames</h1>
+    <div th:if="${searchUnsuccessful}" style="color: red;">
+        <span th:text="${searchUnsuccessful}"></span>
+    </div>
+    <div th:if="${invalidSession}" style="color: red;">
+        <span th:text="${invalidSession}"></span>
+    </div>
+    <div>
+        <form action="/game" method="get">
+            <input type="text" name="name" id="name" placeholder="Enter boardgame name">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <h3>Here are your results:</h3>
+    <div th:each="game:${games}" th:object="${game}">
+        <a th:href="'/game/' + *{gameId}"><span th:text="*{name}"></span></a>
+    </div>
+</body>
+</html>

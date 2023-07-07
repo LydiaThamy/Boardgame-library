@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+</head>
+
+<body>
+    <h1>Boardgame Library</h1>
+
+    <p th:if="${searchUnsuccessful}" style="color: red;">
+        <span th:text="${searchUnsuccessful}"></span>
+    </p>
+
+    <p th:if="${invalidSession}" style="color: red;">
+        <span th:text="${invalidSession}"></span>
+    </p>
+
+    <form action="/game" method="get">
+        <input type="text" name="name" id="name" placeholder="Enter name of boardgame">
+        <button type="submit">Search</button>
+    </form>
+
+</body>
+
+</html>
