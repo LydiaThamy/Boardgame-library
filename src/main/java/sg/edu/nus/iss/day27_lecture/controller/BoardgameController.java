@@ -3,6 +3,7 @@ package sg.edu.nus.iss.day27_lecture.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -94,8 +95,14 @@ public class BoardgameController {
             Model m) {
 
         // service method to insert new comment
-        Boolean commentSuccessful = gameService.postComment(comment);
+        Optional<Comment> newComment = gameService.postComment(comment);
         
+        Boolean commentSuccessful = true;
+
+        if (newComment.isEmpty())
+                commentSuccessful = false;
+        // Boolean commentSuccessful = gameService.postComment(comment);
+
         // model
         Optional<Game> game = gameService.getGameById(gid);
 
@@ -111,8 +118,11 @@ public class BoardgameController {
         // get comments by ID
         Optional<List<Comment>> comments = gameService.getComments(gid);
 
-        if (comments.isPresent())
+        if (comments.isPresent()) {
+            comments.get().add(0, newComment.get());
+            comments.get().remove(5);
             m.addAttribute("comments", comments.get());
+        }
         
         // m.addAttribute("comment", new Comment(gid));
 

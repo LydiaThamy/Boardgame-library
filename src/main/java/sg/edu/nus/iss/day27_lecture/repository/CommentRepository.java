@@ -54,10 +54,12 @@ public class CommentRepository {
         return Optional.of(comments);
     }
 
-    public Boolean postComment(Comment comment) {
+    public Optional<Comment> postComment(Comment comment) {
+
+        Document doc;
 
         try {
-            template.insert(
+            doc = template.insert(
                     new Document()
                     // new Document(F_ID, new ObjectId())
                             .append(F_C_ID, UUID.randomUUID().toString().substring(0, 7))
@@ -68,10 +70,10 @@ public class CommentRepository {
                     C_COMMENTS);
 
         } catch (Exception e) {
-            return false;
+            return Optional.empty();
         }
 
-        return true;
+        return Optional.of(Utility.toComment(doc));
     }
 
 }

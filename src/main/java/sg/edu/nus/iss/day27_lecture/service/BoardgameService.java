@@ -3,6 +3,7 @@ package sg.edu.nus.iss.day27_lecture.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class BoardgameService {
         return commmentRepo.getComments(gid);
     }
 
-    public Boolean postComment(Comment comment) {
+    public Optional<Comment> postComment(Comment comment) {
         return commmentRepo.postComment(comment);
     }
     
