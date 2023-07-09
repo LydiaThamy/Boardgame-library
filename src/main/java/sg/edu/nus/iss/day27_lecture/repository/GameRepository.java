@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.stereotype.Repository;
 
 import sg.edu.nus.iss.day27_lecture.Utility;
@@ -24,13 +22,8 @@ public class GameRepository {
 
     private static final String C_GAMES = "games";
 
-    private static final String F_GAME_ID = "gid";
+    private static final String F_GID = "gid";
     private static final String F_NAME = "name";
-    private static final String F_YEAR = "year";
-    private static final String F_RANKING = "ranking";
-    private static final String F_USERS_RATED = "users_rated";
-    private static final String F_URL = "urle";
-    private static final String F_IMAGE = "image";
 
     public Optional<List<Game>> getGameByName(String name) {
         
@@ -56,9 +49,9 @@ public class GameRepository {
         return Optional.of(games);
     }
 
-    public Optional<Game> getGameById(Integer gameId) {
+    public Optional<Game> getGameById(Integer gid) {
         
-        Criteria criteria = Criteria.where(F_GAME_ID).is(gameId);
+        Criteria criteria = Criteria.where(F_GID).is(gid);
         Query query = Query.query(criteria);
 
         // text search
@@ -73,5 +66,5 @@ public class GameRepository {
 
         return Optional.of(Utility.toGame(result.get(0)));
     }
-    
+
 }

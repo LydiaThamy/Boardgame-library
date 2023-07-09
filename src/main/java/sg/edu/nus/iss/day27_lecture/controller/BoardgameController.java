@@ -13,99 +13,113 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession;
+import sg.edu.nus.iss.day27_lecture.model.Comment;
 import sg.edu.nus.iss.day27_lecture.model.Game;
 import sg.edu.nus.iss.day27_lecture.service.BoardgameService;
 
 @Controller
 @RequestMapping
 public class BoardgameController {
-    
+
     @Autowired
     private BoardgameService gameService;
 
-    @GetMapping(path = {"/", "/index"})
-    public String getIndex() {
-        return "index";
+    @GetMapping(path = { "/", "/index" })
+    public String getIndex(Model m) {
+        return "master";
+        // return "index";
     }
 
     @GetMapping("/game")
-    public String getGame(@RequestParam String name, Model m, HttpSession session) {
+    public String getGame(@RequestParam(defaultValue = "") String name, Model m) {
+
+        if (name.equals(""))
+            return "redirect:/";
 
         // use service to find game details
         Optional<List<Game>> games = gameService.getGameByName(name);
 
         if (games.isEmpty()) {
-            m.addAttribute("searchUnsuccessful", name + " does not exist!");
-            return "index";
+            m.addAttribute("gameNameNotFound", "There is no boardgame with the phrase " + name);
+            return "master";
+            // return "index";
         }
 
+        if (games.get().size() == 1) {
+            // return
+        }
+
+        m.addAttribute("searchSuccessful", true);
         m.addAttribute("games", games.get());
-        session.setAttribute("games", games);
+        m.addAttribute("name", name);
 
-        return "result";
+        return "master";
+        // return "result";
     }
 
-    @GetMapping("/game/{gameId}")
-    public String getGame(@PathVariable Integer gameId, Model m, HttpSession session) {
+    @GetMapping("/game/{gid}")
+    public String getGame(@PathVariable Integer gid, Model m) {
 
-        Game game;
+        // get game by ID
+        Optional<Game> game = gameService.getGameById(gid);
 
-        // check if a comment has been posted
-        // String commented = (String) session.getAttribute("commentSuccessful");
-        
-        // use service to find game details
-        // if (commented == null) {
-            game = gameService.getGameById(gameId).get();
-            session.setAttribute("game", game);
-            
-        // } else {
-        //     m.addAttribute("commentSuccessful", commented);
-        //     game = (Game) session.getAttribute("game");
-        // }
-        
-        m.addAttribute("game", game);
-        
-        return "game";
-    }
-
-    // @GetMapping("/game/{gameId}")
-    // public String getGame(@PathVariable Integer gameId, Model m, HttpSession session) {
-
-    //     Game game;
-
-    //     // check if a comment has been posted
-    //     String commented = (String) session.getAttribute("commentSuccessful");
-        
-    //     // use service to find game details
-    //     if (commented == null) {
-    //         game = gameService.getGameById(gameId).get();
-    //         session.setAttribute("game", game);
-            
-    //     } else {
-    //         m.addAttribute("commentSuccessful", commented);
-    //         game = (Game) session.getAttribute("game");
-    //     }
-        
-    //     m.addAttribute("game", game);
-        
-    //     return "game";
-    // }
-
-    @PostMapping("/game/{gameId}")
-    public String postComment(@ModelAttribute String comment, @PathVariable Integer gameId, Model m, HttpSession session) {
-        
-        // service method to insert new comment
-        m.addAttribute("commentSuccessful", "Your comment has been posted!");
-
-        Optional<Game> game = gameService.getGameById(gameId);
         if (game.isEmpty()) {
-            session.setAttribute("invalidSession", "Your session has expired");
-            return "index";
+            m.addAttribute("gidNotFound", "There is no boardgame with the ID " + gid);
+            return "master";
+            // return "index";
         }
-            
+
+        // get comments by ID
+        Optional<List<Comment>> comments = gameService.getComments(gid);
+
+        if (comments.isPresent())
+            m.addAttribute("comments", comments.get());
+
+        m.addAttribute("gameFound", true);
         m.addAttribute("game", game.get());
-        return "game";
+
+        m.addAttribute("comment", new Comment(gid));
+
+        return "master";
+        // return "game";
+    }
+
+    @PostMapping("/game/{gid}")
+    public String postComment(
+            // @ModelAttribute String user,
+            // @ModelAttribute String rating,
+            // @ModelAttribute String cText,
+            @ModelAttribute Comment comment,
+            @PathVariable Integer gid,
+            Model m) {
+
+        // service method to insert new comment
+        Boolean commentSuccessful = gameService.postComment(comment);
+        
+        // model
+        Optional<Game> game = gameService.getGameById(gid);
+
+        if (game.isEmpty()) {
+            m.addAttribute("gidNotFound", "There is no boardgame with the ID " + gid);
+            return "master";
+            // return "index";
+        }
+
+        m.addAttribute("game", game.get());
+        m.addAttribute("gameFound", true);
+
+        // get comments by ID
+        Optional<List<Comment>> comments = gameService.getComments(gid);
+
+        if (comments.isPresent())
+            m.addAttribute("comments", comments.get());
+        
+        // m.addAttribute("comment", new Comment(gid));
+
+        m.addAttribute("commentSuccessful", commentSuccessful);
+
+        return "master";
+        // return "game";
     }
 
 }

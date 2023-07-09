@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+</head>
+
+<body>
+    <h1>Boardgame Library</h1>
+
+    <form action="/game" method="get">
+        <h3>Search for boardgames</h3>
+        <input type="text" name="name" id="name">
+        <button type="submit">Search</button>
+    </form>
+
+
+    <div th:object="${game}">
+
+        <h2><span th:text="*{name}"></span></h2>
+
+        <img th:src="*{image}" th:alt="'image of ' + *{name}">
+        <table>
+            <tr>
+                <td>Year</td>
+                <td>:</td>
+                <td><span th:text="*{year}"></span></td>
+            </tr>
+            <tr>
+                <td>Ranking</td>
+                <td>:</td>
+                <td><span th:text="*{ranking}"></span></td>
+            </tr>
+            <tr>
+                <td>Users rated</td>
+                <td>:</td>
+                <td><span th:text="*{usersRated}"></span></td>
+            </tr>
+            <tr>
+                <td>URL</td>
+                <td>:</td>
+                <td><a th:href="*{url}" target="_blank"><span th:text="*{url}"></span></a></td>
+            </tr>
+        </table><br>
+
+        <div th:if="${comments}">
+            <h3>User reviews</h3>
+            <div th:each="comment : ${comments}" th:object="${comment}">
+                <p>
+                    <b><span th:text="*{user}"></span></b></span>
+                    [Rating: <span th:text="*{rating}"></span>/10]
+                </p>
+                <p th:text="*{cText}"></p>
+            </div>
+
+        </div>
+
+        <div>
+            <h3>Share your reviews with us</h3>
+
+            <div th:if="${commentSuccessful}" style="color: red;">
+                <span th:text="${commentSuccessful}"></span>
+            </div><br>
+
+            <form th:action="'/game/' + *{gid}" method="post">
+                <textarea name="comment" cols="30" rows="10"></textarea><br><br>
+                <!-- <input type="hidden" th:field="${game}"> -->
+                <!-- <input type="hidden" name="gid" th:value="*{gid}"> -->
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -10,16 +10,17 @@
 <body>
     <h1>Boardgame Library</h1>
 
-    <p th:if="${searchUnsuccessful}" style="color: red;">
-        <span th:text="${searchUnsuccessful}"></span>
+    <p th:if="${gameNameNotFound}" style="color: red;">
+        <span th:text="${gameNameNotFound}"></span>
     </p>
-
-    <p th:if="${invalidSession}" style="color: red;">
-        <span th:text="${invalidSession}"></span>
+    
+    <p th:if="${gidNotFound}" style="color: red;">
+        <span th:text="${gidNotFound}"></span>
     </p>
 
     <form action="/game" method="get">
-        <input type="text" name="name" id="name" placeholder="Enter name of boardgame">
+        <h3>Search for boardgames</h3>
+        <input type="text" name="name" id="name">
         <button type="submit">Search</button>
     </form>
 

@@ -7,21 +7,27 @@
 </head>
 <body>
     <h1>Boardgames</h1>
+
     <div th:if="${searchUnsuccessful}" style="color: red;">
         <span th:text="${searchUnsuccessful}"></span>
     </div>
+
     <div th:if="${invalidSession}" style="color: red;">
         <span th:text="${invalidSession}"></span>
     </div>
+    
+    <h3>Boardgames containing the word '<span th:text="${name}"></span>'</h3>
+
+    <div th:each="game:${games}" th:object="${game}">
+        <a th:href="'/game/' + *{gid}"><span th:text="*{name}"></span></a>
+    </div>
+
     <div>
         <form action="/game" method="get">
-            <input type="text" name="name" id="name" placeholder="Enter boardgame name">
+            <h3>Search for more boardgames</h3>
+            <input type="text" name="name" id="name">
             <button type="submit">Search</button>
         </form>
-    </div>
-    <h3>Here are your results:</h3>
-    <div th:each="game:${games}" th:object="${game}">
-        <a th:href="'/game/' + *{gameId}"><span th:text="*{name}"></span></a>
     </div>
 </body>
 </html>

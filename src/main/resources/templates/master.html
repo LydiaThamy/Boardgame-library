@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+</head>
+
+<body>
+    <h1>Boardgame Library</h1>
+
+    <!-- error messages -->
+    <p th:if="${gameNameNotFound}" style="color: red;">
+        <span th:text="${gameNameNotFound}"></span>
+    </p>
+
+    <p th:if="${gidNotFound}" style="color: red;">
+        <span th:text="${gidNotFound}"></span>
+    </p>
+
+    <div th:if="${searchUnsuccessful}" style="color: red;">
+        <span th:text="${searchUnsuccessful}"></span>
+    </div>
+
+    <div th:if="${invalidSession}" style="color: red;">
+        <span th:text="${invalidSession}"></span>
+    </div>
+
+    <!-- search button -->
+    <form action="/game" method="get">
+        <!-- <h3>Search for boardgames</h3> -->
+        <input type="text" name="name" id="name" placeholder="Find a boardgame">
+        <button type="submit">Search</button>
+        <br>
+    </form>
+
+    <!-- search results -->
+    <div th:if="${searchSuccessful}">
+        <h2>Boardgames containing the word '<span th:text="${name}"></span>'</h2>
+
+        <div th:each="game:${games}" th:object="${game}">
+            <a th:href="'/game/' + *{gid}"><span th:text="*{name}"></span></a>
+        </div>
+    </div>
+
+    <!-- game details -->
+    <div th:if="${gameFound}" th:object="${game}">
+
+        <h2><span th:text="*{name}"></span></h2>
+
+        <img th:src="*{image}" th:alt="'image of ' + *{name}">
+        <table>
+            <tr>
+                <td>Year</td>
+                <td>:</td>
+                <td><span th:text="*{year}"></span></td>
+            </tr>
+            <tr>
+                <td>Ranking</td>
+                <td>:</td>
+                <td><span th:text="*{ranking}"></span></td>
+            </tr>
+            <tr>
+                <td>Users rated</td>
+                <td>:</td>
+                <td><span th:text="*{usersRated}"></span></td>
+            </tr>
+            <tr>
+                <td>URL</td>
+                <td>:</td>
+                <td><a th:href="*{url}" target="_blank"><span th:text="*{url}"></span></a></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- <div th:if="${comments}"> -->
+    <!-- <h2>User reviews</h2> -->
+
+    <div th:if="${comments}" th:each="c : ${comments}" th:object="${c}">
+        <br>
+        <span th:text="*{cText}" style="font-style: italic;"></span>
+        <span>
+            [Rating: <span th:text="*{rating}"></span>/10]
+        </span>
+        <span>
+            <b>- <span th:text="*{user}"></span></b></span>
+        </span>
+        <br>
+    </div>
+
+    <!-- <div th:if="${comments}" th:each="comment : ${comments}" th:object="${comment}">
+        <span th:text="*{cText}" style="font-style: italic;"></span>
+        <span>
+            [Rating: <span th:text="*{rating}"></span>/10]
+        </span>
+        <span>
+            <b>- <span th:text="*{user}"></span></b></span>
+        </span>
+        <br><br>
+    </div> -->
+
+    <!-- </div> -->
+
+    <div th:if="${comment}" class="post-comment">
+
+        
+        <div th:unless="${commentSuccessful}" th:object="${comment}">
+
+            <h2>Share your reviews with us</h2>
+
+            <!-- <form th:action="'/game/' + ${game.gid}" method="post" th:object="${comment}"> -->
+            <form method="post" th:action="'/game/' + *{gid}">
+
+                <p class="user">
+                    <label for="user">Username: </label>
+                    <input type="text" th:field="*{user}">
+                </p>
+
+                <p class="rating">
+                    <label for="rating">Rating: </label>
+
+                    <input type="range" min="1" max="10" th:field="*{rating}" list="markers">
+
+                    <datalist id="markers">
+                        <option value="0" label="terrible"></option>
+                        <option value="5" label="average"></option>
+                        <option value="10" label="amazing"></option>
+                    </datalist>
+                </p>
+
+                <p id="cText"><label for="cText">Comments:</label>
+                    <textarea id="cText" th:field="*{cText}" cols="70" rows="3"></textarea>
+                </p>
+
+                <!-- <input type="hidden" th:field="${game}"> --
+                -- <input type="hidden" name="gid" th:value="*{gid}"> -->
+
+                <button type="submit">Submit</button>
+
+            </form>
+
+            <!-- <form th:action="'/game/' + *{gid}" method="post">
+            
+                !-- user --
+                <p>
+                    <label for="user">Username: </label>
+                    <input type="text" name="user" id="user">
+                </p>
+                
+                !-- rating --
+                <p>
+                    <label for="rating">Rating: </label>
+                    
+                    <input type="range" min="0" max="10" name="rating" id="rating" list="markers">
+                    
+                    <datalist id="markers">
+                        <option value="0" label="terrible"></option>
+                        <option value="5" label="average"></option>
+                        <option value="10" label="amazing"></option>
+                    </datalist>
+                    
+                </p>
+                !-- cText --
+                <p><label for="cText">Comments:</label></p>
+                <textarea name="cText" id="cText" cols="75" rows="5"></textarea><br><br>
+                !-- <input type="hidden" th:field="${game}">
+                -- <input type="hidden" name="gid" th:value="*{gid}"> --
+                <button type="submit">Submit</button>
+            </form> -->
+
+        </div>
+
+        <div th:if="${commentSuccessful}" style="color: red;">
+            <p>Your comment has been posted!</p>
+            <!-- <span th:text="${commentSuccessful}"></span> -->
+        </div>
+
+    </div>
+
+</body>
+
+</html>
