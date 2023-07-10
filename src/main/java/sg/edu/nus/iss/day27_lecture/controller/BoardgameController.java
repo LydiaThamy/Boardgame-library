@@ -94,15 +94,6 @@ public class BoardgameController {
             @PathVariable Integer gid,
             Model m) {
 
-        // service method to insert new comment
-        Optional<Comment> newComment = gameService.postComment(comment);
-        
-        Boolean commentSuccessful = true;
-
-        if (newComment.isEmpty())
-                commentSuccessful = false;
-        // Boolean commentSuccessful = gameService.postComment(comment);
-
         // model
         Optional<Game> game = gameService.getGameById(gid);
 
@@ -117,15 +108,26 @@ public class BoardgameController {
 
         // get comments by ID
         Optional<List<Comment>> comments = gameService.getComments(gid);
+        
+        if (comments.isPresent() && comments.get().size() == 5) {
+            comments.get().remove(4);
+        }
 
-        if (comments.isPresent()) {
+        // service method to insert new comment
+        Boolean commentSuccessful = false;
+        
+        Optional<Comment> newComment = gameService.postComment(comment);
+
+        if (newComment.isPresent()) {
+            commentSuccessful = true;
+            // Boolean commentSuccessful = gameService.postComment(comment);
+            
             comments.get().add(0, newComment.get());
-            comments.get().remove(5);
             m.addAttribute("comments", comments.get());
+            
+            // m.addAttribute("comment", new Comment(gid));
         }
         
-        // m.addAttribute("comment", new Comment(gid));
-
         m.addAttribute("commentSuccessful", commentSuccessful);
 
         return "master";
