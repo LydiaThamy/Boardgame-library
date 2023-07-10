@@ -79,7 +79,8 @@
 
     <div th:if="${comments}" th:each="c : ${comments}" th:object="${c}">
         <br>
-        <span th:text="*{cText}" style="font-style: italic;"></span>
+        [(*{cText})]
+        <!-- <span th:text="*{cText}" style="font-style: italic;"></span> -->
         <span>
             [Rating: <span th:text="*{rating}"></span>/10]
         </span>
